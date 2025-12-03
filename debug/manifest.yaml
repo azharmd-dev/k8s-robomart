@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debug
+  namespace: robomart
+  labels:
+    name: debug
+    project: robomart
+spec:
+  containers:
+  - name: debug
+    image: azharmd/debug:v1
+    imagePullPolicy: Always
