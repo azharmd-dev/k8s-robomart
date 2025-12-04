@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user
+  namespace: robomart
+data:
+  MONGO: "true"
+  REDIS_URL: "redis://redis:6379"
+  MONGO_URL: "mongodb://mongodb:27017/users"
+
+---
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: user
+  namespace: robomart
+  labels: 
+    project: robomart
+    component: user
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: robomart
+      component: user
+      tier: backend
+  template:
+      metadata:
+        labels:
+          project: robomart
+          component: user
+          tier: backend
+      spec:
+        containers:
+        - name: user
+          image: azharmd/user:v1
+          imagePullPolicy: Always
+          envFrom:
+          - configMapRef:
+              name: user
+            ports:
+            - name: liveness-port
+              containerPort: 8080
+            readinessProbe:
+              httpGet:
+                path: /health
+                port: liveness-port
+              failureThreshold: 1
+              periodSeconds: 20
+            livenessProbe:
+              httpGet:
+                path: /health
+                port: liveness-port
+              failureThreshold: 1
+              periodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user
+  namespace: robomart
+spec:
+  selector:
+    project: robomart
+    component: user
+    tier: backend
+  ports:
+  - protocol: TCP
+    port: 8080 # service port
+    targetPort: 8080 # container port
