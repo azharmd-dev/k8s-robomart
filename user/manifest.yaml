@@ -26,34 +26,34 @@ spec:
       component: user
       tier: backend
   template:
-      metadata:
-        labels:
-          project: robomart
-          component: user
-          tier: backend
-      spec:
-        containers:
-        - name: user
-          image: azharmd/user:v1
-          imagePullPolicy: Always
-          envFrom:
-          - configMapRef:
-              name: user
-            ports:
-            - name: liveness-port
-              containerPort: 8080
-            readinessProbe:
-              httpGet:
-                path: /health
-                port: liveness-port
-              failureThreshold: 1
-              periodSeconds: 20
-            livenessProbe:
-              httpGet:
-                path: /health
-                port: liveness-port
-              failureThreshold: 1
-              periodSeconds: 30
+    metadata:
+      labels:
+        project: robomart
+        component: user
+        tier: backend
+    spec:
+      containers:
+      - name: user
+        image: azharmd/user:v1
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: user
+        ports:
+        - name: liveness-port
+          containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: liveness-port
+          failureThreshold: 1
+          periodSeconds: 20
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: liveness-port
+          failureThreshold: 1
+          periodSeconds: 30
 ---
 apiVersion: v1
 kind: Service
